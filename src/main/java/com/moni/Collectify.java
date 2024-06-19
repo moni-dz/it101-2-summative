@@ -1,30 +1,35 @@
+/*
+ * Created by JFormDesigner on Thu Jun 20 02:01:30 PST 2024
+ */
+
 package com.moni;
-
-import com.formdev.flatlaf.FlatLightLaf;
-import com.formdev.flatlaf.intellijthemes.FlatXcodeDarkIJTheme;
-import com.formdev.flatlaf.util.SystemInfo;
-
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.table.*;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.Vector;
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.table.*;
+
+import com.formdev.flatlaf.FlatLaf;
+import com.formdev.flatlaf.util.SystemInfo;
 import com.jgoodies.forms.factories.*;
+import com.moni.themes.CollectifyLaf;
 
 import static javax.swing.JOptionPane.*;
 
 /**
  * @author moni
  */
-public class Application extends JFrame implements ActionListener, ChangeListener {
+public class Collectify extends JFrame implements ActionListener, ChangeListener {
     private final static String APP_TITLE = "Expense Tracker";
 
     public static void main(String[] args) {
@@ -36,18 +41,17 @@ public class Application extends JFrame implements ActionListener, ChangeListene
             System.setProperty("apple.awt.textantialiasing", "true");
         }
 
-        SwingUtilities.invokeLater(() -> {
-            FlatLightLaf.setup();
-            FlatXcodeDarkIJTheme.setup();
-            new Application();
-        });
+        SwingUtilities.invokeLater(Collectify::new);
     }
 
-    public Application() {
+    public Collectify() {
+        FlatLaf.registerCustomDefaultsSource(getClass().getResource("com.moni.themes"));
+        CollectifyLaf.setup();
+
         var root = getRootPane();
         var taskbar = Taskbar.getTaskbar();
 
-        taskbar.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icon-crop.png")));
+        taskbar.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icon.png")));
 
         if (SystemInfo.isMacOS && SystemInfo.isMacFullWindowContentSupported) {
             root.putClientProperty("apple.awt.fullWindowContent", true);
@@ -63,6 +67,7 @@ public class Application extends JFrame implements ActionListener, ChangeListene
         initComponents();
         initListeners();
         updateTotalFields();
+        //setBackground(new Color(0xff, 0xb4, 0xd6));
     }
 
     private void saveHandler() {
@@ -209,17 +214,21 @@ public class Application extends JFrame implements ActionListener, ChangeListene
         var model = (DefaultTableModel) itemTable.getModel();
         var totalPrice = costPerItem * quantity;
 
-        for (int i = 0; i < model.getRowCount(); i++) {
-            if (itemName.equalsIgnoreCase((String) model.getValueAt(i, 1))) {
-                int currentQuantity = (int) model.getValueAt(i, 2);
-                int currentPrice = (int) model.getValueAt(i, 3);
-                int newQuantity = currentQuantity + quantity;
-                System.out.println(totalPrice);
+        if (model.getRowCount() == 0) {
+            model.addRow(new Object[]{boxName, itemName, quantity, totalPrice});
+        } else {
+            for (int i = 0; i < model.getRowCount(); i++) {
+                if (itemName.equalsIgnoreCase((String) model.getValueAt(i, 1))) {
+                    int currentQuantity = (int) model.getValueAt(i, 2);
+                    int currentPrice = (int) model.getValueAt(i, 3);
+                    int newQuantity = currentQuantity + quantity;
+                    System.out.println(totalPrice);
 
-                model.setValueAt(newQuantity, i, 2);
-                model.setValueAt(currentPrice + totalPrice, i, 3);
-            } else if (i == model.getRowCount() - 1) {
-                model.addRow(new Object[]{boxName, itemName, quantity, totalPrice});
+                    model.setValueAt(newQuantity, i, 2);
+                    model.setValueAt(currentPrice + totalPrice, i, 3);
+                } else if (i == model.getRowCount() - 1) {
+                    model.addRow(new Object[]{boxName, itemName, quantity, totalPrice});
+                }
             }
         }
 
@@ -330,7 +339,6 @@ public class Application extends JFrame implements ActionListener, ChangeListene
         var editMenu = new JMenu();
         clearTableItem = new JMenuItem();
         var vSpacer1 = new JPanel(null);
-        var bannerLabel = new JLabel();
         var vSpacer3 = new JPanel(null);
         var buySep = compFactory.createSeparator("Buy");
         var hSpacer2 = new JPanel(null);
@@ -341,27 +349,38 @@ public class Application extends JFrame implements ActionListener, ChangeListene
         var boxLabel = new JLabel();
         boxField = new JTextField();
         var hSpacer3 = new JPanel(null);
+        var bannerPanel = new JPanel();
+        var bannerLabel = new JLabel();
+        var hSpacer4 = new JPanel(null);
+        var vSpacer7 = new JPanel(null);
         var itemLabel1 = new JLabel();
         itemField = new JTextField();
+        var vSpacer8 = new JPanel(null);
         var quantityLabel = new JLabel();
         quantitySpinner = new JSpinner();
         var costLabel = new JLabel();
         costSpinner = new JSpinner();
+        var vSpacer9 = new JPanel(null);
         var label10 = new JLabel();
         totalCostField = new JTextField();
         addButton = new JButton();
         var vSpacer4 = new JPanel(null);
         var sellSep = compFactory.createSeparator("Sell");
+        var hSpacer5 = new JPanel(null);
         var itemLabel2 = new JLabel();
         itemSelection = new JComboBox<>();
+        var vSpacer10 = new JPanel(null);
         var sellQuantityLabel = new JLabel();
         sellQuantitySpinner = new JSpinner();
         var priceLabel = new JLabel();
         priceSpinner = new JSpinner();
+        var vSpacer11 = new JPanel(null);
         var totalPriceLabel = new JLabel();
         totalPriceField = new JTextField();
+        hSpacer6 = new JPanel(null);
         sellButton = new JButton();
         var vSpacer5 = new JPanel(null);
+        var vSpacer6 = new JPanel(null);
         var totalExpensesLabel = new JLabel();
         totalExpensesField = new JTextField();
         var vSpacer2 = new JPanel(null);
@@ -373,13 +392,15 @@ public class Application extends JFrame implements ActionListener, ChangeListene
         setAutoRequestFocus(false);
         setFont(new Font("SF Pro Display", Font.PLAIN, 16));
         setResizable(false);
-        setIconImage(new ImageIcon(Objects.requireNonNull(getClass().getResource("/icon-crop.png"))).getImage());
+        setIconImage(new ImageIcon(getClass().getResource("/icon.png")).getImage());
+        setBackground(new Color(0xffb4d6));
+        setForeground(new Color(0xffb4d6));
         var contentPane = getContentPane();
         contentPane.setLayout(new GridBagLayout());
-        ((GridBagLayout)contentPane.getLayout()).columnWidths = new int[] {41, 24, 105, 105, 105, 105, 35, 104, 339, 20, 0};
-        ((GridBagLayout)contentPane.getLayout()).rowHeights = new int[] {25, 101, 50, 24, 35, 35, 35, 35, 65, 25, 35, 35, 35, 0, 15, 20, 0};
-        ((GridBagLayout)contentPane.getLayout()).columnWeights = new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0E-4};
-        ((GridBagLayout)contentPane.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0E-4};
+        ((GridBagLayout)contentPane.getLayout()).columnWidths = new int[] {36, 19, 100, 100, 100, 5, 100, 30, 99, 334, 20, 0};
+        ((GridBagLayout)contentPane.getLayout()).rowHeights = new int[] {20, 96, 45, 19, 30, 5, 30, 5, 30, 6, 30, 60, 20, 30, 5, 30, 5, 30, 0, 19, 10, 20, 0};
+        ((GridBagLayout)contentPane.getLayout()).columnWeights = new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0E-4};
+        ((GridBagLayout)contentPane.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0E-4};
 
         //======== menuBar ========
         {
@@ -409,24 +430,30 @@ public class Application extends JFrame implements ActionListener, ChangeListene
             menuBar.add(editMenu);
         }
         setJMenuBar(menuBar);
-        contentPane.add(vSpacer1, new GridBagConstraints(0, 0, 10, 1, 0.0, 0.0,
+        contentPane.add(vSpacer1, new GridBagConstraints(0, 0, 11, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 0, 5, 0), 0, 0));
-        contentPane.add(bannerLabel, new GridBagConstraints(1, 1, 8, 1, 0.0, 0.0,
+            new Insets(0, 0, 0, 0), 0, 0));
+        contentPane.add(vSpacer3, new GridBagConstraints(0, 2, 11, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 0, 5, 5), 0, 0));
-        contentPane.add(vSpacer3, new GridBagConstraints(0, 2, 10, 1, 0.0, 0.0,
+            new Insets(0, 0, 0, 0), 0, 0));
+
+        //---- buySep ----
+        buySep.setForeground(new Color(0xffd2e0));
+        buySep.setBackground(new Color(0xffd2e0));
+        buySep.setOpaque(true);
+        contentPane.add(buySep, new GridBagConstraints(1, 3, 6, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 0, 5, 0), 0, 0));
-        contentPane.add(buySep, new GridBagConstraints(1, 3, 5, 1, 0.0, 0.0,
+            new Insets(0, 0, 0, 0), 0, 0));
+        contentPane.add(hSpacer2, new GridBagConstraints(0, 0, 1, 22, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 0, 5, 5), 0, 0));
-        contentPane.add(hSpacer2, new GridBagConstraints(0, 1, 1, 15, 0.0, 0.0,
+            new Insets(0, 0, 0, 0), 0, 0));
+
+        //---- tableSep ----
+        tableSep.setOpaque(true);
+        tableSep.setBackground(new Color(0xffd2e0));
+        contentPane.add(tableSep, new GridBagConstraints(8, 3, 2, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 0, 0, 5), 0, 0));
-        contentPane.add(tableSep, new GridBagConstraints(7, 3, 2, 1, 0.0, 0.0,
-            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 0, 5, 5), 0, 0));
+            new Insets(0, 0, 0, 0), 0, 0));
 
         //======== tablePane ========
         {
@@ -453,90 +480,138 @@ public class Application extends JFrame implements ActionListener, ChangeListene
             itemTable.setAutoCreateRowSorter(true);
             tablePane.setViewportView(itemTable);
         }
-        contentPane.add(tablePane, new GridBagConstraints(7, 4, 2, 10, 0.0, 0.0,
+        contentPane.add(tablePane, new GridBagConstraints(8, 4, 2, 15, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 0, 5, 5), 0, 0));
-        contentPane.add(hSpacer1, new GridBagConstraints(6, 4, 1, 11, 0.0, 0.0,
+            new Insets(0, 0, 0, 0), 0, 0));
+        contentPane.add(hSpacer1, new GridBagConstraints(7, 2, 1, 20, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 0, 5, 5), 0, 0));
+            new Insets(0, 0, 0, 0), 0, 0));
 
         //---- boxLabel ----
         boxLabel.setText("Box");
+        boxLabel.setBackground(new Color(0xffd2e0));
+        boxLabel.setOpaque(true);
         contentPane.add(boxLabel, new GridBagConstraints(2, 4, 1, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 0, 5, 5), 0, 0));
-        contentPane.add(boxField, new GridBagConstraints(3, 4, 3, 1, 0.0, 0.0,
+            new Insets(0, 0, 0, 0), 0, 0));
+        contentPane.add(boxField, new GridBagConstraints(3, 4, 4, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 0, 5, 5), 0, 0));
-        contentPane.add(hSpacer3, new GridBagConstraints(9, 1, 1, 15, 0.0, 0.0,
+            new Insets(0, 0, 0, 0), 0, 0));
+        contentPane.add(hSpacer3, new GridBagConstraints(10, 0, 1, 22, 0.0, 0.0,
+            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+            new Insets(0, 0, 0, 0), 0, 0));
+
+        //======== bannerPanel ========
+        {
+            bannerPanel.setBackground(new Color(0xffd2e0));
+            bannerPanel.setForeground(new Color(0xffd2e0));
+            bannerPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+
+            //---- bannerLabel ----
+            bannerLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            bannerLabel.setForeground(new Color(0xffb4d6));
+            bannerLabel.setBackground(new Color(0xffb4d6));
+            bannerLabel.setIcon(new ImageIcon(getClass().getResource("/banner.png")));
+            bannerPanel.add(bannerLabel);
+        }
+        contentPane.add(bannerPanel, new GridBagConstraints(0, 1, 11, 1, 0.0, 0.0,
+            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+            new Insets(0, 0, 0, 0), 0, 0));
+        contentPane.add(hSpacer4, new GridBagConstraints(1, 4, 1, 7, 0.0, 0.0,
+            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+            new Insets(0, 0, 0, 0), 0, 0));
+        contentPane.add(vSpacer7, new GridBagConstraints(2, 5, 5, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
             new Insets(0, 0, 0, 0), 0, 0));
 
         //---- itemLabel1 ----
         itemLabel1.setText("Item");
-        contentPane.add(itemLabel1, new GridBagConstraints(2, 5, 1, 1, 0.0, 0.0,
+        itemLabel1.setOpaque(true);
+        itemLabel1.setBackground(new Color(0xffd2e0));
+        contentPane.add(itemLabel1, new GridBagConstraints(2, 6, 1, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 0, 5, 5), 0, 0));
-        contentPane.add(itemField, new GridBagConstraints(3, 5, 3, 1, 0.0, 0.0,
+            new Insets(0, 0, 0, 0), 0, 0));
+        contentPane.add(itemField, new GridBagConstraints(3, 6, 4, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 0, 5, 5), 0, 0));
+            new Insets(0, 0, 0, 0), 0, 0));
+        contentPane.add(vSpacer8, new GridBagConstraints(2, 7, 5, 1, 0.0, 0.0,
+            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+            new Insets(0, 0, 0, 0), 0, 0));
 
         //---- quantityLabel ----
         quantityLabel.setText("Quantity");
-        contentPane.add(quantityLabel, new GridBagConstraints(2, 6, 1, 1, 0.0, 0.0,
+        quantityLabel.setOpaque(true);
+        quantityLabel.setBackground(new Color(0xffd2e0));
+        contentPane.add(quantityLabel, new GridBagConstraints(2, 8, 1, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 0, 5, 5), 0, 0));
+            new Insets(0, 0, 0, 0), 0, 0));
 
         //---- quantitySpinner ----
         quantitySpinner.setModel(new SpinnerNumberModel(1, 1, null, 1));
-        contentPane.add(quantitySpinner, new GridBagConstraints(3, 6, 1, 1, 0.0, 0.0,
+        contentPane.add(quantitySpinner, new GridBagConstraints(3, 8, 1, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 0, 5, 5), 0, 0));
+            new Insets(0, 0, 0, 0), 0, 0));
 
         //---- costLabel ----
         costLabel.setText("Cost per Item");
         costLabel.setHorizontalAlignment(SwingConstants.TRAILING);
-        contentPane.add(costLabel, new GridBagConstraints(4, 6, 1, 1, 0.0, 0.0,
+        costLabel.setOpaque(true);
+        costLabel.setBackground(new Color(0xffd2e0));
+        contentPane.add(costLabel, new GridBagConstraints(4, 8, 1, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 0, 5, 5), 0, 0));
+            new Insets(0, 0, 0, 0), 0, 0));
 
         //---- costSpinner ----
         costSpinner.setModel(new SpinnerNumberModel(500, 0, null, 100));
-        contentPane.add(costSpinner, new GridBagConstraints(5, 6, 1, 1, 0.0, 0.0,
+        contentPane.add(costSpinner, new GridBagConstraints(6, 8, 1, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 0, 5, 5), 0, 0));
+            new Insets(0, 0, 0, 0), 0, 0));
+        contentPane.add(vSpacer9, new GridBagConstraints(2, 9, 5, 1, 0.0, 0.0,
+            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+            new Insets(0, 0, 0, 0), 0, 0));
 
         //---- label10 ----
         label10.setText("Total Cost");
-        contentPane.add(label10, new GridBagConstraints(2, 7, 1, 1, 0.0, 0.0,
+        label10.setOpaque(true);
+        label10.setBackground(new Color(0xffd2e0));
+        contentPane.add(label10, new GridBagConstraints(2, 10, 1, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 0, 5, 5), 0, 0));
+            new Insets(0, 0, 0, 0), 0, 0));
 
         //---- totalCostField ----
         totalCostField.setEditable(false);
         totalCostField.setText("100");
         totalCostField.setHorizontalAlignment(SwingConstants.TRAILING);
-        contentPane.add(totalCostField, new GridBagConstraints(3, 7, 2, 1, 0.0, 0.0,
+        contentPane.add(totalCostField, new GridBagConstraints(3, 10, 2, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 0, 5, 5), 0, 0));
+            new Insets(0, 0, 0, 0), 0, 0));
 
         //---- addButton ----
         addButton.setText("Add");
-        contentPane.add(addButton, new GridBagConstraints(5, 7, 1, 1, 0.0, 0.0,
+        contentPane.add(addButton, new GridBagConstraints(6, 10, 1, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 0, 5, 5), 0, 0));
-        contentPane.add(vSpacer4, new GridBagConstraints(1, 8, 5, 1, 0.0, 0.0,
+            new Insets(0, 0, 0, 0), 0, 0));
+        contentPane.add(vSpacer4, new GridBagConstraints(0, 11, 8, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 0, 5, 5), 0, 0));
-        contentPane.add(sellSep, new GridBagConstraints(1, 9, 5, 1, 0.0, 0.0,
+            new Insets(0, 0, 0, 0), 0, 0));
+
+        //---- sellSep ----
+        sellSep.setBackground(new Color(0xffd2e0));
+        sellSep.setOpaque(true);
+        contentPane.add(sellSep, new GridBagConstraints(1, 12, 6, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 0, 5, 5), 0, 0));
+            new Insets(0, 0, 0, 0), 0, 0));
+        contentPane.add(hSpacer5, new GridBagConstraints(1, 13, 1, 5, 0.0, 0.0,
+            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+            new Insets(0, 0, 0, 0), 0, 0));
 
         //---- itemLabel2 ----
         itemLabel2.setText("Item");
-        contentPane.add(itemLabel2, new GridBagConstraints(2, 10, 1, 1, 0.0, 0.0,
+        itemLabel2.setOpaque(true);
+        itemLabel2.setBackground(new Color(0xffd2e0));
+        contentPane.add(itemLabel2, new GridBagConstraints(2, 13, 1, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 0, 5, 5), 0, 0));
+            new Insets(0, 0, 0, 0), 0, 0));
 
         //---- itemSelection ----
         itemSelection.setModel(new DefaultComboBoxModel<>(new String[] {
@@ -544,73 +619,93 @@ public class Application extends JFrame implements ActionListener, ChangeListene
             "y",
             "x"
         }));
-        contentPane.add(itemSelection, new GridBagConstraints(3, 10, 3, 1, 0.0, 0.0,
+        contentPane.add(itemSelection, new GridBagConstraints(3, 13, 4, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 0, 5, 5), 0, 0));
+            new Insets(0, 0, 0, 0), 0, 0));
+        contentPane.add(vSpacer10, new GridBagConstraints(2, 14, 5, 1, 0.0, 0.0,
+            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+            new Insets(0, 0, 0, 0), 0, 0));
 
         //---- sellQuantityLabel ----
         sellQuantityLabel.setText("Quantity");
-        contentPane.add(sellQuantityLabel, new GridBagConstraints(2, 11, 1, 1, 0.0, 0.0,
+        sellQuantityLabel.setOpaque(true);
+        sellQuantityLabel.setBackground(new Color(0xffd2e0));
+        contentPane.add(sellQuantityLabel, new GridBagConstraints(2, 15, 1, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 0, 5, 5), 0, 0));
+            new Insets(0, 0, 0, 0), 0, 0));
 
         //---- sellQuantitySpinner ----
         sellQuantitySpinner.setModel(new SpinnerNumberModel(1, 1, null, 1));
-        contentPane.add(sellQuantitySpinner, new GridBagConstraints(3, 11, 1, 1, 0.0, 0.0,
+        contentPane.add(sellQuantitySpinner, new GridBagConstraints(3, 15, 1, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 0, 5, 5), 0, 0));
+            new Insets(0, 0, 0, 0), 0, 0));
 
         //---- priceLabel ----
         priceLabel.setText("Price per Item");
         priceLabel.setHorizontalAlignment(SwingConstants.TRAILING);
-        contentPane.add(priceLabel, new GridBagConstraints(4, 11, 1, 1, 0.0, 0.0,
+        priceLabel.setOpaque(true);
+        priceLabel.setBackground(new Color(0xffd2e0));
+        contentPane.add(priceLabel, new GridBagConstraints(4, 15, 1, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 0, 5, 5), 0, 0));
+            new Insets(0, 0, 0, 0), 0, 0));
 
         //---- priceSpinner ----
         priceSpinner.setModel(new SpinnerNumberModel(600, 0, null, 100));
-        contentPane.add(priceSpinner, new GridBagConstraints(5, 11, 1, 1, 0.0, 0.0,
+        contentPane.add(priceSpinner, new GridBagConstraints(6, 15, 1, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 0, 5, 5), 0, 0));
+            new Insets(0, 0, 0, 0), 0, 0));
+        contentPane.add(vSpacer11, new GridBagConstraints(2, 16, 5, 1, 0.0, 0.0,
+            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+            new Insets(0, 0, 0, 0), 0, 0));
 
         //---- totalPriceLabel ----
         totalPriceLabel.setText("Total Price");
-        contentPane.add(totalPriceLabel, new GridBagConstraints(2, 12, 1, 1, 0.0, 0.0,
+        totalPriceLabel.setOpaque(true);
+        totalPriceLabel.setBackground(new Color(0xffd2e0));
+        contentPane.add(totalPriceLabel, new GridBagConstraints(2, 17, 1, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 0, 5, 5), 0, 0));
+            new Insets(0, 0, 0, 0), 0, 0));
 
         //---- totalPriceField ----
         totalPriceField.setEditable(false);
         totalPriceField.setText("1200");
         totalPriceField.setHorizontalAlignment(SwingConstants.TRAILING);
-        contentPane.add(totalPriceField, new GridBagConstraints(3, 12, 2, 1, 0.0, 0.0,
+        contentPane.add(totalPriceField, new GridBagConstraints(3, 17, 2, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 0, 5, 5), 0, 0));
+            new Insets(0, 0, 0, 0), 0, 0));
+        contentPane.add(hSpacer6, new GridBagConstraints(5, 8, 1, 10, 0.0, 0.0,
+            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+            new Insets(0, 0, 0, 0), 0, 0));
 
         //---- sellButton ----
         sellButton.setText("Sell");
-        contentPane.add(sellButton, new GridBagConstraints(5, 12, 1, 1, 0.0, 0.0,
+        contentPane.add(sellButton, new GridBagConstraints(6, 17, 1, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 0, 5, 5), 0, 0));
-        contentPane.add(vSpacer5, new GridBagConstraints(1, 13, 5, 2, 0.0, 0.0,
+            new Insets(0, 0, 0, 0), 0, 0));
+        contentPane.add(vSpacer5, new GridBagConstraints(0, 18, 8, 4, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 0, 5, 5), 0, 0));
+            new Insets(0, 0, 0, 0), 0, 0));
+        contentPane.add(vSpacer6, new GridBagConstraints(8, 19, 2, 1, 0.0, 0.0,
+            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+            new Insets(0, 0, 0, 0), 0, 0));
 
         //---- totalExpensesLabel ----
         totalExpensesLabel.setText("Total Expenses");
         totalExpensesLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        contentPane.add(totalExpensesLabel, new GridBagConstraints(7, 14, 1, 1, 0.0, 0.0,
+        totalExpensesLabel.setOpaque(true);
+        totalExpensesLabel.setBackground(new Color(0xffd2e0));
+        contentPane.add(totalExpensesLabel, new GridBagConstraints(8, 20, 1, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 0, 5, 5), 0, 0));
+            new Insets(0, 0, 0, 0), 0, 0));
 
         //---- totalExpensesField ----
         totalExpensesField.setEditable(false);
         totalExpensesField.setText("0");
         totalExpensesField.setHorizontalAlignment(SwingConstants.TRAILING);
-        contentPane.add(totalExpensesField, new GridBagConstraints(8, 14, 1, 1, 0.0, 0.0,
+        contentPane.add(totalExpensesField, new GridBagConstraints(9, 20, 1, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(0, 0, 5, 5), 0, 0));
-        contentPane.add(vSpacer2, new GridBagConstraints(0, 15, 10, 1, 0.0, 0.0,
+            new Insets(0, 0, 0, 0), 0, 0));
+        contentPane.add(vSpacer2, new GridBagConstraints(0, 21, 11, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
             new Insets(0, 0, 0, 0), 0, 0));
         pack();
@@ -634,6 +729,7 @@ public class Application extends JFrame implements ActionListener, ChangeListene
     private JSpinner sellQuantitySpinner;
     private JSpinner priceSpinner;
     private JTextField totalPriceField;
+    private JPanel hSpacer6;
     private JButton sellButton;
     private JTextField totalExpensesField;
     // JFormDesigner - End of variables declaration  //GEN-END:variables  @formatter:on
