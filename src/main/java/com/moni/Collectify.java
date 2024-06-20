@@ -237,6 +237,16 @@ public class Collectify extends JFrame implements ActionListener, ChangeListener
         var model = (DefaultTableModel) itemTable.getModel();
         var totalPrice = costPerItem * quantity;
 
+        if (boxName.isEmpty()) {
+            showMessageDialog(this, "Please enter a box name.", APP_TITLE, ERROR_MESSAGE);
+            return;
+        }
+
+        if (itemName.isEmpty()) {
+            showMessageDialog(this, "Please enter an item name.", APP_TITLE, ERROR_MESSAGE);
+            return;
+        }
+
         if (model.getRowCount() == 0) {
             model.addRow(new Object[]{boxName, itemName, quantity, totalPrice});
         } else {
