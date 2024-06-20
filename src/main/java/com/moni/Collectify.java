@@ -178,12 +178,12 @@ public class Collectify extends JFrame implements ActionListener, ChangeListener
                     int quantity = Integer.parseInt(data[2]), price = Integer.parseInt(data[3]);
                     model.addRow(new Object[]{box, item, quantity, price});
                 }
-
-                updateTotalFields();
             } catch (IOException e) {
                 showMessageDialog(this, "Failed to load file!", APP_TITLE, ERROR_MESSAGE);
             }
         }
+
+        updateTotalFields();
     }
 
     private void updateTotalFields() {
@@ -276,7 +276,7 @@ public class Collectify extends JFrame implements ActionListener, ChangeListener
                     showMessageDialog(this, "Cannot sell more items than you possess.", APP_TITLE, ERROR_MESSAGE);
                 } else {
                     model.setValueAt(newQuantity, i, 2);
-                    model.setValueAt(currentPrice - totalPrice, i, 3);
+                    model.setValueAt(totalPrice - currentPrice, i, 3);
                 }
 
                 break;
