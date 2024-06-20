@@ -4,7 +4,7 @@ new FormModel {
 	contentType: "form/swing"
 	root: new FormRoot {
 		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class java.awt.GridBagLayout ) {
-			"$columnSpecs": "36, 19, 100, 100, 100, 5, 100, 30, 99, 334, 20"
+			"$columnSpecs": "36, 19, 100, 15, 100, 25, 100, 20, 100, 30, 99, 25, 334, 20"
 			"$rowSpecs": "20, 96, 45, 19, 30, 5, 30, 5, 30, 6, 30, 60, 20, 30, 5, 30, 5, 30, 0, 19, 10, 20"
 			"$alignLeft": true
 			"$alignTop": true
@@ -14,7 +14,7 @@ new FormModel {
 			"defaultCloseOperation": 2
 			"visible": true
 			"autoRequestFocus": false
-			"font": new java.awt.Font( "SF Pro Display", 0, 16 )
+			"font": new com.jformdesigner.model.SwingDerivedFont( "Happy Chicken", 196608, 16, true )
 			"resizable": false
 			"iconImage": new com.jformdesigner.model.SwingIcon( 0, "/icon.png" )
 			"background": new java.awt.Color( 255, 180, 214, 255 )
@@ -25,7 +25,7 @@ new FormModel {
 					"JavaCodeGenerator.variableLocal": true
 				}
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-				"gridwidth": 11
+				"gridwidth": 14
 			} )
 			add( new FormComponent( "com.jformdesigner.designer.wrapper.VSpacer" ) {
 				name: "vSpacer3"
@@ -33,7 +33,7 @@ new FormModel {
 					"JavaCodeGenerator.variableLocal": true
 				}
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-				"gridwidth": 11
+				"gridwidth": 14
 				"gridy": 2
 			} )
 			add( new FormComponent( "com.jformdesigner.designer.wrapper.JGoodiesFormsSeparator" ) {
@@ -42,13 +42,13 @@ new FormModel {
 				"foreground": new java.awt.Color( 255, 210, 224, 255 )
 				"background": new java.awt.Color( 255, 210, 224, 255 )
 				"opaque": true
+				"font": new java.awt.Font( ".AppleSystemUIFont", 1, 13 )
 				auxiliary() {
-					"JavaCodeGenerator.variableLocal": true
 					"JavaCodeGenerator.variableName": "buySep"
 				}
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 				"gridy": 3
-				"gridwidth": 6
+				"gridwidth": 8
 				"gridx": 1
 			} )
 			add( new FormComponent( "com.jformdesigner.designer.wrapper.HSpacer" ) {
@@ -65,13 +65,12 @@ new FormModel {
 				"opaque": true
 				"background": new java.awt.Color( 255, 210, 224, 255 )
 				auxiliary() {
-					"JavaCodeGenerator.variableLocal": true
 					"JavaCodeGenerator.variableName": "tableSep"
 				}
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-				"gridx": 8
+				"gridx": 10
 				"gridy": 3
-				"gridwidth": 2
+				"gridwidth": 3
 			} )
 			add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
 				name: "tablePane"
@@ -123,10 +122,10 @@ new FormModel {
 					"autoCreateRowSorter": true
 				} )
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-				"gridx": 8
+				"gridx": 10
 				"gridheight": 15
 				"gridy": 4
-				"gridwidth": 2
+				"gridwidth": 3
 			} )
 			add( new FormComponent( "com.jformdesigner.designer.wrapper.HSpacer" ) {
 				name: "hSpacer1"
@@ -134,7 +133,7 @@ new FormModel {
 					"JavaCodeGenerator.variableLocal": true
 				}
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-				"gridx": 7
+				"gridx": 9
 				"gridheight": 20
 				"gridy": 2
 			} )
@@ -143,9 +142,6 @@ new FormModel {
 				"text": "Box"
 				"background": new java.awt.Color( 255, 210, 224, 255 )
 				"opaque": true
-				auxiliary() {
-					"JavaCodeGenerator.variableLocal": true
-				}
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 				"gridy": 4
 				"gridx": 2
@@ -153,9 +149,9 @@ new FormModel {
 			add( new FormComponent( "javax.swing.JTextField" ) {
 				name: "boxField"
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-				"gridx": 3
+				"gridx": 4
 				"gridy": 4
-				"gridwidth": 4
+				"gridwidth": 5
 			} )
 			add( new FormComponent( "com.jformdesigner.designer.wrapper.HSpacer" ) {
 				name: "hSpacer3"
@@ -163,7 +159,7 @@ new FormModel {
 					"JavaCodeGenerator.variableLocal": true
 				}
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-				"gridx": 10
+				"gridx": 13
 				"gridheight": 22
 			} )
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.FlowLayout ) {
@@ -188,7 +184,7 @@ new FormModel {
 				} )
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 				"gridy": 1
-				"gridwidth": 11
+				"gridwidth": 14
 			} )
 			add( new FormComponent( "com.jformdesigner.designer.wrapper.HSpacer" ) {
 				name: "hSpacer4"
@@ -200,6 +196,13 @@ new FormModel {
 				"gridy": 4
 				"gridheight": 7
 			} )
+			add( new FormComponent( "com.jformdesigner.designer.wrapper.HSpacer" ) {
+				name: "hSpacer10"
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridx": 3
+				"gridy": 4
+				"gridheight": 7
+			} )
 			add( new FormComponent( "com.jformdesigner.designer.wrapper.VSpacer" ) {
 				name: "vSpacer7"
 				auxiliary() {
@@ -208,16 +211,13 @@ new FormModel {
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 				"gridx": 2
 				"gridy": 5
-				"gridwidth": 5
+				"gridwidth": 7
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "itemLabel1"
 				"text": "Item"
 				"opaque": true
 				"background": new java.awt.Color( 255, 210, 224, 255 )
-				auxiliary() {
-					"JavaCodeGenerator.variableLocal": true
-				}
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 				"gridx": 2
 				"gridy": 6
@@ -225,9 +225,9 @@ new FormModel {
 			add( new FormComponent( "javax.swing.JTextField" ) {
 				name: "itemField"
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-				"gridx": 3
+				"gridx": 4
 				"gridy": 6
-				"gridwidth": 4
+				"gridwidth": 5
 			} )
 			add( new FormComponent( "com.jformdesigner.designer.wrapper.VSpacer" ) {
 				name: "vSpacer8"
@@ -237,16 +237,13 @@ new FormModel {
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 				"gridx": 2
 				"gridy": 7
-				"gridwidth": 5
+				"gridwidth": 7
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "quantityLabel"
 				"text": "Quantity"
 				"opaque": true
 				"background": new java.awt.Color( 255, 210, 224, 255 )
-				auxiliary() {
-					"JavaCodeGenerator.variableLocal": true
-				}
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 				"gridy": 8
 				"gridx": 2
@@ -258,7 +255,13 @@ new FormModel {
 					value: 1
 				}
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-				"gridx": 3
+				"gridx": 4
+				"gridy": 8
+			} )
+			add( new FormComponent( "com.jformdesigner.designer.wrapper.HSpacer" ) {
+				name: "hSpacer7"
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridx": 5
 				"gridy": 8
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
@@ -267,11 +270,8 @@ new FormModel {
 				"horizontalAlignment": 11
 				"opaque": true
 				"background": new java.awt.Color( 255, 210, 224, 255 )
-				auxiliary() {
-					"JavaCodeGenerator.variableLocal": true
-				}
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-				"gridx": 4
+				"gridx": 6
 				"gridy": 8
 			} )
 			add( new FormComponent( "javax.swing.JSpinner" ) {
@@ -282,7 +282,7 @@ new FormModel {
 					value: 500
 				}
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-				"gridx": 6
+				"gridx": 8
 				"gridy": 8
 			} )
 			add( new FormComponent( "com.jformdesigner.designer.wrapper.VSpacer" ) {
@@ -293,16 +293,13 @@ new FormModel {
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 				"gridx": 2
 				"gridy": 9
-				"gridwidth": 5
+				"gridwidth": 7
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "label10"
 				"text": "Total Cost"
 				"opaque": true
 				"background": new java.awt.Color( 255, 210, 224, 255 )
-				auxiliary() {
-					"JavaCodeGenerator.variableLocal": true
-				}
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 				"gridx": 2
 				"gridy": 10
@@ -313,15 +310,15 @@ new FormModel {
 				"text": "100"
 				"horizontalAlignment": 11
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-				"gridx": 3
+				"gridx": 4
 				"gridy": 10
-				"gridwidth": 2
+				"gridwidth": 3
 			} )
 			add( new FormComponent( "javax.swing.JButton" ) {
 				name: "addButton"
 				"text": "Add"
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-				"gridx": 6
+				"gridx": 8
 				"gridy": 10
 			} )
 			add( new FormComponent( "com.jformdesigner.designer.wrapper.VSpacer" ) {
@@ -331,7 +328,7 @@ new FormModel {
 				}
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 				"gridy": 11
-				"gridwidth": 8
+				"gridwidth": 10
 			} )
 			add( new FormComponent( "com.jformdesigner.designer.wrapper.JGoodiesFormsSeparator" ) {
 				name: "sellSep"
@@ -339,13 +336,12 @@ new FormModel {
 				"background": new java.awt.Color( 255, 210, 224, 255 )
 				"opaque": true
 				auxiliary() {
-					"JavaCodeGenerator.variableLocal": true
 					"JavaCodeGenerator.variableName": "sellSep"
 				}
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 				"gridx": 1
 				"gridy": 12
-				"gridwidth": 6
+				"gridwidth": 8
 			} )
 			add( new FormComponent( "com.jformdesigner.designer.wrapper.HSpacer" ) {
 				name: "hSpacer5"
@@ -362,9 +358,6 @@ new FormModel {
 				"text": "Item"
 				"opaque": true
 				"background": new java.awt.Color( 255, 210, 224, 255 )
-				auxiliary() {
-					"JavaCodeGenerator.variableLocal": true
-				}
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 				"gridx": 2
 				"gridy": 13
@@ -381,9 +374,9 @@ new FormModel {
 					"JavaCodeGenerator.typeParameters": "String"
 				}
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-				"gridx": 3
+				"gridx": 4
 				"gridy": 13
-				"gridwidth": 4
+				"gridwidth": 5
 			} )
 			add( new FormComponent( "com.jformdesigner.designer.wrapper.VSpacer" ) {
 				name: "vSpacer10"
@@ -393,16 +386,13 @@ new FormModel {
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 				"gridx": 2
 				"gridy": 14
-				"gridwidth": 5
+				"gridwidth": 7
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "sellQuantityLabel"
 				"text": "Quantity"
 				"opaque": true
 				"background": new java.awt.Color( 255, 210, 224, 255 )
-				auxiliary() {
-					"JavaCodeGenerator.variableLocal": true
-				}
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 				"gridx": 2
 				"gridy": 15
@@ -414,7 +404,7 @@ new FormModel {
 					value: 1
 				}
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-				"gridx": 3
+				"gridx": 4
 				"gridy": 15
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
@@ -428,7 +418,7 @@ new FormModel {
 				}
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 				"gridy": 15
-				"gridx": 4
+				"gridx": 6
 			} )
 			add( new FormComponent( "javax.swing.JSpinner" ) {
 				name: "priceSpinner"
@@ -438,7 +428,7 @@ new FormModel {
 					value: 600
 				}
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-				"gridx": 6
+				"gridx": 8
 				"gridy": 15
 			} )
 			add( new FormComponent( "com.jformdesigner.designer.wrapper.VSpacer" ) {
@@ -449,16 +439,13 @@ new FormModel {
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 				"gridx": 2
 				"gridy": 16
-				"gridwidth": 5
+				"gridwidth": 7
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "totalPriceLabel"
 				"text": "Total Price"
 				"opaque": true
 				"background": new java.awt.Color( 255, 210, 224, 255 )
-				auxiliary() {
-					"JavaCodeGenerator.variableLocal": true
-				}
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 				"gridx": 2
 				"gridy": 17
@@ -469,22 +456,35 @@ new FormModel {
 				"text": "1200"
 				"horizontalAlignment": 11
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-				"gridx": 3
+				"gridx": 4
 				"gridy": 17
-				"gridwidth": 2
+				"gridwidth": 3
 			} )
 			add( new FormComponent( "com.jformdesigner.designer.wrapper.HSpacer" ) {
 				name: "hSpacer6"
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-				"gridx": 5
+				"gridx": 7
 				"gridy": 8
 				"gridheight": 10
+			} )
+			add( new FormComponent( "com.jformdesigner.designer.wrapper.HSpacer" ) {
+				name: "hSpacer11"
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridx": 3
+				"gridy": 13
+				"gridheight": 5
+			} )
+			add( new FormComponent( "com.jformdesigner.designer.wrapper.HSpacer" ) {
+				name: "hSpacer8"
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridx": 5
+				"gridy": 15
 			} )
 			add( new FormComponent( "javax.swing.JButton" ) {
 				name: "sellButton"
 				"text": "Sell"
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-				"gridx": 6
+				"gridx": 8
 				"gridy": 17
 			} )
 			add( new FormComponent( "com.jformdesigner.designer.wrapper.VSpacer" ) {
@@ -494,7 +494,7 @@ new FormModel {
 				}
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 				"gridy": 18
-				"gridwidth": 8
+				"gridwidth": 10
 				"gridheight": 4
 			} )
 			add( new FormComponent( "com.jformdesigner.designer.wrapper.VSpacer" ) {
@@ -503,9 +503,9 @@ new FormModel {
 					"JavaCodeGenerator.variableLocal": true
 				}
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-				"gridx": 8
+				"gridx": 10
 				"gridy": 19
-				"gridwidth": 2
+				"gridwidth": 3
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "totalExpensesLabel"
@@ -513,11 +513,14 @@ new FormModel {
 				"horizontalAlignment": 0
 				"opaque": true
 				"background": new java.awt.Color( 255, 210, 224, 255 )
-				auxiliary() {
-					"JavaCodeGenerator.variableLocal": true
-				}
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-				"gridx": 8
+				"gridx": 10
+				"gridy": 20
+			} )
+			add( new FormComponent( "com.jformdesigner.designer.wrapper.HSpacer" ) {
+				name: "hSpacer9"
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridx": 11
 				"gridy": 20
 			} )
 			add( new FormComponent( "javax.swing.JTextField" ) {
@@ -526,7 +529,7 @@ new FormModel {
 				"text": "0"
 				"horizontalAlignment": 11
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-				"gridx": 9
+				"gridx": 12
 				"gridy": 20
 			} )
 			add( new FormComponent( "com.jformdesigner.designer.wrapper.VSpacer" ) {
@@ -536,7 +539,7 @@ new FormModel {
 				}
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 				"gridy": 21
-				"gridwidth": 11
+				"gridwidth": 14
 			} )
 			menuBar: new FormContainer( "javax.swing.JMenuBar", new FormLayoutManager( class javax.swing.JMenuBar ) ) {
 				name: "menuBar"
@@ -571,8 +574,8 @@ new FormModel {
 				} )
 			}
 		}, new FormLayoutConstraints( null ) {
-			"location": new java.awt.Point( 66, 50 )
-			"size": new java.awt.Dimension( 760, 630 )
+			"location": new java.awt.Point( 30, 15 )
+			"size": new java.awt.Dimension( 820, 630 )
 		} )
 	}
 }
