@@ -30,7 +30,7 @@ import static javax.swing.JOptionPane.*;
  * @author moni
  */
 public class Collectify extends JFrame implements ActionListener, ChangeListener {
-    private final static String APP_TITLE = "Expense Tracker";
+    private final static String APP_TITLE = "Collectify";
 
     public static void main(String[] args) {
         if (SystemInfo.isMacOS) {
@@ -63,20 +63,28 @@ public class Collectify extends JFrame implements ActionListener, ChangeListener
         CollectifyLaf.setup();
 
         var root = getRootPane();
-        var taskbar = Taskbar.getTaskbar();
 
-        taskbar.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icon.png")));
+        if (SystemInfo.isWindows) {
+            setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icon.png")));
+            setTitle(APP_TITLE);
+        }
 
-        if (SystemInfo.isMacOS && SystemInfo.isMacFullWindowContentSupported) {
-            root.putClientProperty("apple.awt.fullWindowContent", true);
-            root.putClientProperty("apple.awt.transparentTitleBar", true);
+        if (SystemInfo.isMacOS) {
+            var taskbar = Taskbar.getTaskbar();
+            taskbar.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icon.png")));
 
-            if (SystemInfo.isJava_17_orLater) {
-                root.putClientProperty("apple.awt.windowTitleVisible", false);
-            } else {
-                setTitle(null);
+            if (SystemInfo.isMacFullWindowContentSupported) {
+                root.putClientProperty("apple.awt.fullWindowContent", true);
+                root.putClientProperty("apple.awt.transparentTitleBar", true);
+
+                if (SystemInfo.isJava_17_orLater) {
+                    root.putClientProperty("apple.awt.windowTitleVisible", false);
+                } else {
+                    setTitle(null);
+                }
             }
         }
+
 
         initComponents();
         initListeners();
