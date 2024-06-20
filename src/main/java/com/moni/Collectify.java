@@ -255,7 +255,6 @@ public class Collectify extends JFrame implements ActionListener, ChangeListener
                     int currentQuantity = (int) model.getValueAt(i, 2);
                     int currentPrice = (int) model.getValueAt(i, 3);
                     int newQuantity = currentQuantity + quantity;
-                    System.out.println(totalPrice);
 
                     model.setValueAt(newQuantity, i, 2);
                     model.setValueAt(currentPrice + totalPrice, i, 3);
@@ -270,7 +269,13 @@ public class Collectify extends JFrame implements ActionListener, ChangeListener
     }
 
     private void sellButtonHandler() {
-        var selectedItem = (String) Objects.requireNonNull(itemSelection.getSelectedItem());
+        var selectedItem = (String) itemSelection.getSelectedItem();
+
+        if (selectedItem == null) {
+            showMessageDialog(this, "Please select an item.", APP_TITLE, ERROR_MESSAGE);
+            return;
+        }
+
         var quantity = (Integer) sellQuantitySpinner.getValue();
         var sellingPrice = (Integer) priceSpinner.getValue();
 
