@@ -179,7 +179,7 @@ public class Collectify extends JFrame implements ActionListener, ChangeListener
                     model.addRow(new Object[]{box, item, quantity, price});
                 }
 
-                updateExpenses();
+                updateTotalFields();
             } catch (IOException e) {
                 showMessageDialog(this, "Failed to load file!", APP_TITLE, ERROR_MESSAGE);
             }
