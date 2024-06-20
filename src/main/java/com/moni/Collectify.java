@@ -190,6 +190,7 @@ public class Collectify extends JFrame implements ActionListener, ChangeListener
         updateTotalCost();
         updateTotalPrice();
         updateExpenses();
+        updateItemSelection();
     }
 
     private void updateTotalCost() {
