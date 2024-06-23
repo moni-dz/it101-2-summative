@@ -24,6 +24,7 @@ import com.formdev.flatlaf.util.SystemInfo;
 import com.jgoodies.forms.factories.*;
 import com.moni.themes.CollectifyLaf;
 
+import static java.awt.Font.TRUETYPE_FONT;
 import static javax.swing.JOptionPane.*;
 
 /**
@@ -46,17 +47,20 @@ public class Collectify extends JFrame implements ActionListener, ChangeListener
 
     public Collectify() {
         try {
-            var happyChicken = Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(getClass().getResourceAsStream("/Happy Chicken.ttf")));
-            happyChicken = happyChicken.deriveFont(12f);
+            var happyChickenFont = Objects.requireNonNull(getClass().getResourceAsStream("/Happy Chicken.ttf"));
+            var playgroundFont = Objects.requireNonNull(getClass().getResourceAsStream("/Playground.ttf"));
 
-            var playground = Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(getClass().getResourceAsStream("/Playground.ttf")));
+            var happyChicken = Font.createFont(TRUETYPE_FONT, happyChickenFont);
+            var playground = Font.createFont(TRUETYPE_FONT, playgroundFont);
+
+            happyChicken = happyChicken.deriveFont(12f);
             playground = playground.deriveFont(14f);
 
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(happyChicken);
             ge.registerFont(playground);
-        } catch (FontFormatException | IOException e) {
-            throw new RuntimeException(e);
+        } catch (FontFormatException | IOException | NullPointerException e) {
+            showMessageDialog(this, e.getLocalizedMessage(), "Error", ERROR_MESSAGE);
         }
 
         FlatLaf.registerCustomDefaultsSource(getClass().getResource("com.moni.themes"));
@@ -85,11 +89,9 @@ public class Collectify extends JFrame implements ActionListener, ChangeListener
             }
         }
 
-
         initComponents();
         initListeners();
         updateTotalFields();
-        //setBackground(new Color(0xff, 0xb4, 0xd6));
     }
 
     private void saveHandler() {
