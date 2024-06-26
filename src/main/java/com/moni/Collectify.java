@@ -7,12 +7,11 @@ package com.moni;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.ParseException;
 import java.util.Objects;
-import java.util.Scanner;
 import java.util.Vector;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -59,7 +58,7 @@ public class Collectify extends JFrame implements ActionListener, ChangeListener
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(happyChicken);
             ge.registerFont(playground);
-        } catch (FontFormatException | IOException | NullPointerException e) {
+        } catch (Exception e) {
             showMessageDialog(this, e.getLocalizedMessage(), "Error", ERROR_MESSAGE);
         }
 
@@ -67,15 +66,14 @@ public class Collectify extends JFrame implements ActionListener, ChangeListener
         CollectifyLaf.setup();
 
         var root = getRootPane();
+        var iconImage = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icon.png"));
 
         if (SystemInfo.isWindows) {
-            setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icon.png")));
+            setIconImage(iconImage);
             setTitle(APP_TITLE);
-        }
-
-        if (SystemInfo.isMacOS) {
+        } else if (SystemInfo.isMacOS) {
             var taskbar = Taskbar.getTaskbar();
-            taskbar.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icon.png")));
+            taskbar.setIconImage(iconImage);
 
             if (SystemInfo.isMacFullWindowContentSupported) {
                 root.putClientProperty("apple.awt.fullWindowContent", true);
@@ -92,217 +90,6 @@ public class Collectify extends JFrame implements ActionListener, ChangeListener
         initComponents();
         initListeners();
         updateTotalFields();
-    }
-
-    private void saveHandler() {
-        File file = null;
-
-        if (SystemInfo.isMacOS) {
-            var fileDialog = new FileDialog(this, "Save to file", FileDialog.SAVE);
-            fileDialog.setVisible(true);
-
-            String fileName = fileDialog.getFile(), fileDir = fileDialog.getDirectory();
-
-            if (fileName != null && fileDir != null) {
-                file = new File(fileDir, fileName);
-            }
-        } else {
-            var fileChooser = new JFileChooser();
-            fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-            fileChooser.setDialogTitle("Save to file");
-
-            var result = fileChooser.showOpenDialog(this);
-
-            if (result == JFileChooser.APPROVE_OPTION) {
-                file = fileChooser.getSelectedFile();
-            }
-        }
-
-        if (file != null) {
-            try (var writer = new FileWriter(file)) {
-                var model = (DefaultTableModel) itemTable.getModel();
-
-                for (int i = 0; i < model.getColumnCount(); i++) {
-                    writer.write(model.getColumnName(i) + "\t");
-                }
-
-                writer.write("\n");
-
-                for (int i = 0; i < model.getRowCount(); i++) {
-                    for (int j = 0; j < model.getColumnCount(); j++) {
-                        writer.write(model.getValueAt(i, j).toString() + "\t");
-                    }
-
-                    writer.write("\n");
-                }
-
-                showMessageDialog(this, "Saved file successfully.", APP_TITLE, INFORMATION_MESSAGE);
-            } catch (IOException e) {
-                showMessageDialog(this, "Failed to save file!", APP_TITLE, ERROR_MESSAGE);
-            }
-        }
-    }
-
-    private void loadHandler() {
-        File file = null;
-
-        if (SystemInfo.isMacOS) {
-            var fileDialog = new FileDialog(this, "Load file", FileDialog.LOAD);
-            fileDialog.setVisible(true);
-
-            String fileName = fileDialog.getFile(), fileDir = fileDialog.getDirectory();
-
-            if (fileName != null && fileDir != null) {
-                file = new File(fileDir, fileName);
-            }
-        } else {
-            var fileChooser = new JFileChooser();
-            fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-            fileChooser.setDialogTitle("Load file");
-
-            var result = fileChooser.showOpenDialog(this);
-
-            if (result == JFileChooser.APPROVE_OPTION) {
-                file = fileChooser.getSelectedFile();
-            }
-        }
-
-        if (file != null && !file.getAbsolutePath().trim().isEmpty()) {
-            try (var sc = new Scanner(file)) {
-                var model = (DefaultTableModel) itemTable.getModel();
-                model.setRowCount(0);
-
-                sc.nextLine(); // ignore header
-
-                while (sc.hasNextLine()) {
-                    var data = sc.nextLine().split("\t");
-                    String box = data[0], item = data[1];
-                    int quantity = Integer.parseInt(data[2]), price = Integer.parseInt(data[3]);
-                    model.addRow(new Object[]{box, item, quantity, price});
-                }
-            } catch (IOException e) {
-                showMessageDialog(this, "Failed to load file!", APP_TITLE, ERROR_MESSAGE);
-            }
-        }
-
-        updateTotalFields();
-    }
-
-    private void updateTotalFields() {
-        updateTotalCost();
-        updateTotalPrice();
-        updateExpenses();
-        updateItemSelection();
-    }
-
-    private void updateTotalCost() {
-        var quantity = (Integer) quantitySpinner.getValue();
-        var cost = (Integer) costSpinner.getValue();
-        totalCostField.setText(String.valueOf(quantity * cost));
-    }
-
-    private void updateTotalPrice() {
-        var sellQuantity = (Integer) sellQuantitySpinner.getValue();
-        var price = (Integer) priceSpinner.getValue();
-        totalPriceField.setText(String.valueOf(sellQuantity * price));
-    }
-
-    private void updateExpenses() {
-        var model = (DefaultTableModel) itemTable.getModel();
-        var total = 0;
-
-        for (int i = 0; i < model.getRowCount(); i++) {
-            total += Integer.parseInt(model.getValueAt(i, 3).toString());
-        }
-
-        totalExpensesField.setText(String.valueOf(total));
-    }
-
-    private void updateItemSelection() {
-        var model = (DefaultTableModel) itemTable.getModel();
-        var items = new Vector<String>();
-
-        for (int i = 0; i < model.getRowCount(); i++) {
-            if ((Integer) model.getValueAt(i, 2) != 0) {
-                items.add((String) model.getValueAt(i, 1));
-            }
-        }
-
-        itemSelection.setModel(new DefaultComboBoxModel<>(items));
-    }
-
-    private void addButtonHandler() {
-        var boxName = boxField.getText();
-        var itemName = itemField.getText();
-        var quantity = (Integer) quantitySpinner.getValue();
-        var costPerItem = (Integer) costSpinner.getValue();
-        var model = (DefaultTableModel) itemTable.getModel();
-        var totalPrice = costPerItem * quantity;
-
-        if (boxName.isEmpty()) {
-            showMessageDialog(this, "Please enter a box name.", APP_TITLE, ERROR_MESSAGE);
-            return;
-        }
-
-        if (itemName.isEmpty()) {
-            showMessageDialog(this, "Please enter an item name.", APP_TITLE, ERROR_MESSAGE);
-            return;
-        }
-
-        if (model.getRowCount() == 0) {
-            model.addRow(new Object[]{boxName, itemName, quantity, totalPrice});
-        } else {
-            for (int i = 0; i < model.getRowCount(); i++) {
-                if (itemName.equalsIgnoreCase((String) model.getValueAt(i, 1))) {
-                    int currentQuantity = (int) model.getValueAt(i, 2);
-                    int currentPrice = (int) model.getValueAt(i, 3);
-                    int newQuantity = currentQuantity + quantity;
-
-                    model.setValueAt(newQuantity, i, 2);
-                    model.setValueAt(currentPrice + totalPrice, i, 3);
-                } else if (i == model.getRowCount() - 1) {
-                    model.addRow(new Object[]{boxName, itemName, quantity, totalPrice});
-                }
-            }
-        }
-
-        updateItemSelection();
-        updateExpenses();
-    }
-
-    private void sellButtonHandler() {
-        var selectedItem = (String) itemSelection.getSelectedItem();
-
-        if (selectedItem == null) {
-            showMessageDialog(this, "Please select an item.", APP_TITLE, ERROR_MESSAGE);
-            return;
-        }
-
-        var quantity = (Integer) sellQuantitySpinner.getValue();
-        var sellingPrice = (Integer) priceSpinner.getValue();
-
-        var model = (DefaultTableModel) itemTable.getModel();
-
-        for (int i = 0; i < model.getRowCount(); i++) {
-            if (selectedItem.equalsIgnoreCase((String) model.getValueAt(i, 1))) {
-                int currentQuantity = (int) model.getValueAt(i, 2);
-                int currentPrice = (int) model.getValueAt(i, 3);
-                int newQuantity = currentQuantity - quantity;
-                int totalPrice = sellingPrice * quantity;
-
-                if (newQuantity < 0) {
-                    showMessageDialog(this, "Cannot sell more items than you possess.", APP_TITLE, ERROR_MESSAGE);
-                } else {
-                    model.setValueAt(newQuantity, i, 2);
-                    model.setValueAt(totalPrice - currentPrice, i, 3);
-                }
-
-                break;
-            }
-        }
-
-        updateItemSelection();
-        updateExpenses();
     }
 
     @Override
@@ -352,6 +139,226 @@ public class Collectify extends JFrame implements ActionListener, ChangeListener
 
             updateTotalPrice();
         }
+    }
+
+    private void addButtonHandler() {
+        var boxName = boxField.getText();
+        var itemName = itemField.getText();
+        var quantity = (Integer) quantitySpinner.getValue();
+        var costPerItem = (Integer) costSpinner.getValue();
+        var model = (DefaultTableModel) itemTable.getModel();
+        var totalPrice = costPerItem * quantity;
+
+        if (boxName.isEmpty()) {
+            showMessageDialog(this, "Please enter a box name.", APP_TITLE, ERROR_MESSAGE);
+            return;
+        }
+
+        if (itemName.isEmpty()) {
+            showMessageDialog(this, "Please enter an item name.", APP_TITLE, ERROR_MESSAGE);
+            return;
+        }
+
+        if (model.getRowCount() == 0) {
+            model.addRow(new Object[]{boxName, itemName, quantity, totalPrice});
+        } else {
+            var row = searchItem(itemName);
+
+            if (row != -1) {
+                int currentQuantity = (int) model.getValueAt(row, 2);
+                int currentPrice = (int) model.getValueAt(row, 3);
+                int newQuantity = currentQuantity + quantity;
+
+                model.setValueAt(newQuantity, row, 2);
+                model.setValueAt(currentPrice + totalPrice, row, 3);
+            } else {
+                model.addRow(new Object[]{boxName, itemName, quantity, totalPrice});
+            }
+        }
+
+        updateItemSelection();
+        updateExpenses();
+    }
+
+    private void sellButtonHandler() {
+        var selectedItem = (String) itemSelection.getSelectedItem();
+
+        if (selectedItem == null) {
+            showMessageDialog(this, "Please select an item.", APP_TITLE, ERROR_MESSAGE);
+            return;
+        }
+
+        var quantity = (int) sellQuantitySpinner.getValue();
+        var sellingPrice = (int) priceSpinner.getValue();
+        var model = (DefaultTableModel) itemTable.getModel();
+        var row = searchItem(selectedItem);
+
+        int currentQuantity = (int) model.getValueAt(row, 2);
+        int currentPrice = (int) model.getValueAt(row, 3);
+        int newQuantity = currentQuantity - quantity;
+        int totalPrice = sellingPrice * quantity;
+
+        if (newQuantity < 0) {
+            showMessageDialog(this, "Cannot sell more items than you possess.", APP_TITLE, ERROR_MESSAGE);
+        } else {
+            model.setValueAt(newQuantity, row, 2);
+            model.setValueAt(totalPrice - currentPrice, row, 3);
+        }
+
+        updateItemSelection();
+        updateExpenses();
+    }
+
+    private void saveHandler() {
+        Path path = null;
+
+        if (SystemInfo.isMacOS) {
+            var fileDialog = new FileDialog(this, "Save to file", FileDialog.SAVE);
+            fileDialog.setVisible(true);
+
+            String fileName = fileDialog.getFile(), fileDir = fileDialog.getDirectory();
+
+            if (fileName != null && fileDir != null) {
+                path = Path.of(fileDir, fileName);
+            }
+        } else {
+            var fileChooser = new JFileChooser();
+            fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+            fileChooser.setDialogTitle("Save to file");
+
+            var result = fileChooser.showOpenDialog(this);
+
+            if (result == JFileChooser.APPROVE_OPTION) {
+                path = fileChooser.getSelectedFile().toPath();
+            }
+        }
+
+        if (path != null) {
+            var model = (DefaultTableModel) itemTable.getModel();
+            var data = new StringBuilder();
+
+            data.append("Box\tItem\tQuantity\tPrice\n");
+
+            for (int row = 0; row < model.getRowCount(); row++) {
+                for (int col = 0; col < model.getColumnCount(); col++) {
+                    data.append(model.getValueAt(row, col));
+
+                    if (col != model.getColumnCount() - 1) {
+                        data.append('\t');
+                    }
+                }
+
+                data.append('\n');
+            }
+
+            try {
+                Files.writeString(path, data.toString());
+                showMessageDialog(this, "Saved file successfully.", APP_TITLE, INFORMATION_MESSAGE);
+            } catch (IOException e) {
+                showMessageDialog(this, "Failed to save file!", APP_TITLE, ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void loadHandler() {
+        Path path = null;
+
+        if (SystemInfo.isMacOS) {
+            var fileDialog = new FileDialog(this, "Load file", FileDialog.LOAD);
+            fileDialog.setVisible(true);
+
+            var fileName = fileDialog.getFile();
+            var fileDir = fileDialog.getDirectory();
+
+            if (fileName != null && fileDir != null) {
+                path = Path.of(fileDir, fileName);
+            }
+        } else {
+            var fileChooser = new JFileChooser();
+            fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+            fileChooser.setDialogTitle("Load file");
+
+            var result = fileChooser.showOpenDialog(this);
+
+            if (result == JFileChooser.APPROVE_OPTION) {
+                path = fileChooser.getSelectedFile().toPath();
+            }
+        }
+
+        if (path != null && Files.exists(path)) {
+            try {
+                var model = (DefaultTableModel) itemTable.getModel();
+                var data = Files.readAllLines(path);
+
+                model.setRowCount(0); // Clear the table
+                data.removeFirst(); // Remove the header of the file
+
+                for (String row : data) {
+                    var entry = row.split("\t");
+                    model.addRow(new Object[]{entry[0], entry[1], Integer.parseInt(entry[2]), Integer.parseInt(entry[3])});
+                }
+            } catch (IOException e) {
+                showMessageDialog(this, "Failed to load file!", APP_TITLE, ERROR_MESSAGE);
+            }
+        }
+
+        updateTotalFields();
+    }
+
+    private void updateTotalFields() {
+        updateTotalCost();
+        updateTotalPrice();
+        updateExpenses();
+        updateItemSelection();
+    }
+
+    private void updateTotalCost() {
+        var quantity = (Integer) quantitySpinner.getValue();
+        var cost = (Integer) costSpinner.getValue();
+        totalCostField.setText(String.valueOf(quantity * cost));
+    }
+
+    private void updateTotalPrice() {
+        var sellQuantity = (Integer) sellQuantitySpinner.getValue();
+        var price = (Integer) priceSpinner.getValue();
+        totalPriceField.setText(String.valueOf(sellQuantity * price));
+    }
+
+    private void updateExpenses() {
+        var model = (DefaultTableModel) itemTable.getModel();
+        var total = 0;
+
+        for (int i = 0; i < model.getRowCount(); i++) {
+            total += Integer.parseInt(model.getValueAt(i, 3).toString());
+        }
+
+        totalExpensesField.setText(String.valueOf(total));
+    }
+
+    private void updateItemSelection() {
+        var model = (DefaultTableModel) itemTable.getModel();
+        var items = new Vector<String>();
+
+        for (int i = 0; i < model.getRowCount(); i++) {
+            if ((int) model.getValueAt(i, 2) != 0) {
+                items.add((String) model.getValueAt(i, 1));
+            }
+        }
+
+        itemSelection.setModel(new DefaultComboBoxModel<>(items));
+    }
+
+    // Search and return the index of the item in the table if it exists, otherwise return -1
+    private int searchItem(String item) {
+        var model = (DefaultTableModel) itemTable.getModel();
+
+        for (int row = 0; row < model.getRowCount(); row++) {
+            if (item.equalsIgnoreCase(model.getValueAt(row, 1).toString())) {
+                return row;
+            }
+        }
+
+        return -1;
     }
 
     private void initListeners() {
