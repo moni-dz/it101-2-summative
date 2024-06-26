@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.ParseException;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Vector;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -33,6 +34,7 @@ public class Collectify extends JFrame implements ActionListener, ChangeListener
     private final static String APP_TITLE = "Collectify";
 
     public static void main(String[] args) {
+        // macOS setup
         if (SystemInfo.isMacOS) {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
             System.setProperty("apple.awt.application.name", APP_TITLE);
@@ -45,6 +47,7 @@ public class Collectify extends JFrame implements ActionListener, ChangeListener
     }
 
     public Collectify() {
+        // Load custom fonts
         try {
             var happyChickenFont = Objects.requireNonNull(getClass().getResourceAsStream("/Happy Chicken.ttf"));
             var playgroundFont = Objects.requireNonNull(getClass().getResourceAsStream("/Playground.ttf"));
@@ -59,12 +62,17 @@ public class Collectify extends JFrame implements ActionListener, ChangeListener
             ge.registerFont(happyChicken);
             ge.registerFont(playground);
         } catch (Exception e) {
-            showMessageDialog(this, e.getLocalizedMessage(), "Error", ERROR_MESSAGE);
+            showMessageDialog(this, "Failed to load fonts.", "Error", ERROR_MESSAGE);
         }
 
+        // Load custom theme
         FlatLaf.registerCustomDefaultsSource(getClass().getResource("com.moni.themes"));
-        CollectifyLaf.setup();
 
+        if (!CollectifyLaf.setup()) {
+            showMessageDialog(this, "Failed to load theme.", "Error", ERROR_MESSAGE);
+        }
+
+        // Setup app icon and window decorations
         var root = getRootPane();
         var iconImage = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icon.png"));
 
@@ -89,7 +97,7 @@ public class Collectify extends JFrame implements ActionListener, ChangeListener
 
         initComponents();
         initListeners();
-        updateTotalFields();
+        updateFields();
     }
 
     @Override
@@ -202,7 +210,7 @@ public class Collectify extends JFrame implements ActionListener, ChangeListener
             showMessageDialog(this, "Cannot sell more items than you possess.", APP_TITLE, ERROR_MESSAGE);
         } else {
             model.setValueAt(newQuantity, row, 2);
-            model.setValueAt(totalPrice - currentPrice, row, 3);
+            model.setValueAt(currentPrice - totalPrice, row, 3);
         }
 
         updateItemSelection();
@@ -210,30 +218,7 @@ public class Collectify extends JFrame implements ActionListener, ChangeListener
     }
 
     private void saveHandler() {
-        Path path = null;
-
-        if (SystemInfo.isMacOS) {
-            var fileDialog = new FileDialog(this, "Save to file", FileDialog.SAVE);
-            fileDialog.setVisible(true);
-
-            String fileName = fileDialog.getFile(), fileDir = fileDialog.getDirectory();
-
-            if (fileName != null && fileDir != null) {
-                path = Path.of(fileDir, fileName);
-            }
-        } else {
-            var fileChooser = new JFileChooser();
-            fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-            fileChooser.setDialogTitle("Save to file");
-
-            var result = fileChooser.showOpenDialog(this);
-
-            if (result == JFileChooser.APPROVE_OPTION) {
-                path = fileChooser.getSelectedFile().toPath();
-            }
-        }
-
-        if (path != null) {
+        selectFile(FileDialog.SAVE).ifPresent(path -> {
             var model = (DefaultTableModel) itemTable.getModel();
             var data = new StringBuilder();
 
@@ -257,55 +242,35 @@ public class Collectify extends JFrame implements ActionListener, ChangeListener
             } catch (IOException e) {
                 showMessageDialog(this, "Failed to save file!", APP_TITLE, ERROR_MESSAGE);
             }
-        }
+        });
     }
 
     private void loadHandler() {
-        Path path = null;
+        selectFile(FileDialog.LOAD).ifPresent(path -> {
+            if (Files.exists(path)) {
+                try {
+                    var model = (DefaultTableModel) itemTable.getModel();
+                    var data = Files.readAllLines(path);
 
-        if (SystemInfo.isMacOS) {
-            var fileDialog = new FileDialog(this, "Load file", FileDialog.LOAD);
-            fileDialog.setVisible(true);
+                    model.setRowCount(0); // Clear the table
+                    data.removeFirst(); // Remove the header of the file
 
-            var fileName = fileDialog.getFile();
-            var fileDir = fileDialog.getDirectory();
+                    for (String row : data) {
+                        var entry = row.split("\t");
+                        model.addRow(new Object[]{entry[0], entry[1], Integer.parseInt(entry[2]), Integer.parseInt(entry[3])});
+                    }
 
-            if (fileName != null && fileDir != null) {
-                path = Path.of(fileDir, fileName);
-            }
-        } else {
-            var fileChooser = new JFileChooser();
-            fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-            fileChooser.setDialogTitle("Load file");
-
-            var result = fileChooser.showOpenDialog(this);
-
-            if (result == JFileChooser.APPROVE_OPTION) {
-                path = fileChooser.getSelectedFile().toPath();
-            }
-        }
-
-        if (path != null && Files.exists(path)) {
-            try {
-                var model = (DefaultTableModel) itemTable.getModel();
-                var data = Files.readAllLines(path);
-
-                model.setRowCount(0); // Clear the table
-                data.removeFirst(); // Remove the header of the file
-
-                for (String row : data) {
-                    var entry = row.split("\t");
-                    model.addRow(new Object[]{entry[0], entry[1], Integer.parseInt(entry[2]), Integer.parseInt(entry[3])});
+                    showMessageDialog(this, "Loaded file successfully.", APP_TITLE, INFORMATION_MESSAGE);
+                } catch (IOException e) {
+                    showMessageDialog(this, "Failed to load file!", APP_TITLE, ERROR_MESSAGE);
                 }
-            } catch (IOException e) {
-                showMessageDialog(this, "Failed to load file!", APP_TITLE, ERROR_MESSAGE);
             }
-        }
 
-        updateTotalFields();
+            updateFields();
+        });
     }
 
-    private void updateTotalFields() {
+    private void updateFields() {
         updateTotalCost();
         updateTotalPrice();
         updateExpenses();
@@ -346,6 +311,35 @@ public class Collectify extends JFrame implements ActionListener, ChangeListener
         }
 
         itemSelection.setModel(new DefaultComboBoxModel<>(items));
+    }
+
+    // Show file dialog and return a path if it exists
+    private Optional<Path> selectFile(int mode) {
+        var title = (mode == FileDialog.LOAD) ? "Load file" : "Save to file";
+
+        if (SystemInfo.isMacOS) {
+            var fileDialog = new FileDialog(this, title, mode);
+            fileDialog.setVisible(true);
+
+            var fileName = fileDialog.getFile();
+            var fileDir = fileDialog.getDirectory();
+
+            if (fileName != null && fileDir != null) {
+                return Optional.of(Path.of(fileDir, fileName));
+            }
+        } else {
+            var fileChooser = new JFileChooser();
+            fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+            fileChooser.setDialogTitle(title);
+
+            var result = fileChooser.showOpenDialog(this);
+
+            if (result == JFileChooser.APPROVE_OPTION) {
+                return Optional.of(fileChooser.getSelectedFile().toPath());
+            }
+        }
+
+        return Optional.empty();
     }
 
     // Search and return the index of the item in the table if it exists, otherwise return -1
